@@ -7,6 +7,7 @@ import { connectDB } from './config/db';
 import authRoutes from './routes/authRoutes'; 
 import supermarketRoutes from './routes/supermarketRoutes';
 import productRoutes from './routes/productRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 
 // Configuración de variables de entorno
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/supermarkets', supermarketRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 /* Ruta de prueba
 app.get('/', (req: Request, res: Response) => {

@@ -9,10 +9,11 @@ import { protect, adminOnly } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
+router.use(protect);
 
-router.get('/', protect, getSupermarkets);
-router.post('/', protect,  adminOnly, createSupermarket);
-router.put('/:id', protect,  adminOnly, updateSupermarket);
-router.delete('/:id', protect, adminOnly, deleteSupermarket);
+router.get('/', getSupermarkets);
+router.post('/', adminOnly, createSupermarket);
+router.put('/:id', adminOnly, updateSupermarket);
+router.delete('/:id', adminOnly, deleteSupermarket);
 
 export default router;

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Product from '../models/Product';
+import Notification from '../models/Notification';
 
 // @desc    Obtener productos de UN supermercado específico
 // @route   GET /api/products/supermarket/:supermarketId
@@ -68,8 +69,19 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
         // LOGICA DE ALERTA
         // Si el stock nuevo es menor o igual al mínimo...
         if (updatedProduct && updatedProduct.stock <= updatedProduct.minStock) {
-            // Enviamos un flag en la respuesta para que el Front sepa.
-            console.log(`⚠️ ALERTA DE STOCK: El producto ${updatedProduct.name} se está agotando.`);
+
+            /*
+             *  Enviamos un flag en la respuesta para que el Front sepa.
+             *  console.log(`⚠️ ALERTA DE STOCK: El producto ${updatedProduct.name} se está agotando.`);
+            */
+            
+            // Crear la notificación en BD
+            await Notification.create({
+                type: 'STOCK_ALERT',
+                message: `El producto ${updatedProduct.name} tiene stock crítico (${updatedProduct.stock} uds).`,
+                supermarket: updatedProduct.supermarket,
+                product: updatedProduct._id
+            });
             
             res.json({
                 ...updatedProduct.toObject(),
