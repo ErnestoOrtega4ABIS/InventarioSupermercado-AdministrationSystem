@@ -1,15 +1,29 @@
 // src/types/index.ts
 
-// Interfaz de Usuario (Lo que viene del Backend al loguearse)
+// USUARIO (Basado en UserSchema)
 export interface User {
-    id: string;      // Ojo: MongoDB a veces manda '_id', ajustaremos si es necesario
-    name: string;
+    _id: string;
+    firstName: string;       // Antes teníamos 'name', ahora son dos campos
+    lastName: string;
     email: string;
-    role: 'admin' | 'manager' | 'employee';
-    supermarket?: string; // ID del super (si aplica)
+    role: 'admin' | 'worker' | 'provider'; // Roles exactos del Backend
+    status: boolean;         // Antes 'active', en tu modelo es 'status'
+    googleId?: string;
+    image?: string;          // Opcional, por si decidimos mostrar avatar
 }
 
-// Interfaz de Producto (Para los listados)
+// SUPERMERCADO (Basado en SupermarketSchema)
+export interface Supermarket {
+    _id: string;
+    name: string;
+    address: string;
+    phone?: string;          // En el modelo SÍ existe (opcional)
+    image?: string;          // En el modelo SÍ existe (default: 'default-store.jpg')
+    active: boolean;
+    createdBy?: string;      // ID del usuario que lo creó
+}
+
+// PRODUCTO (Basado en ProductSchema)
 export interface Product {
     _id: string;
     name: string;
@@ -18,24 +32,28 @@ export interface Product {
     price: number;
     stock: number;
     minStock: number;
-    category: string;
+    image?: string;          
+    category?: string;       
+    supermarket: string;     // ID del Supermercado
     active: boolean;
-    alert?: boolean; // Flag para saber si tiene stock bajo
+    
+    alert?: boolean;         
+    alertMessage?: string;
 }
 
-// Interfaz de Supermercado
-export interface Supermarket {
+// NOTIFICACIÓN (Basado en NotificationSchema)
+export interface Notification {
     _id: string;
-    name: string;
-    address: string;
-    managerName: string;
-    phone: string;
-    active: boolean;
+    type: 'STOCK_ALERT' | 'SYSTEM_MSG';
+    message: string;
+    supermarket: string;
+    product?: Product | string; // Puede venir el objeto poblado o solo el ID
+    read: boolean;
+    createdAt: string;       // Las fechas viajan como string en JSON
 }
 
-// Respuesta del Login (NUEVO: Lo que agregamos para el Store)
+// RESPUESTA LOGIN
 export interface LoginResponse {
     message: string;
     user: User;
-    // No incluimos 'token' porque lo manejamos vía Cookies HttpOnly
 }
