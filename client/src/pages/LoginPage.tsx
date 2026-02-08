@@ -23,16 +23,20 @@ export const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            // 1. Petición al Backend
+            // Petición al Backend
             const { data } = await api.post<LoginResponse>('/auth/login', { 
                 email, 
                 password 
             });
 
-            // 2. Guardar usuario en el Store
+            console.log("RESPUESTA DEL BACKEND:", data);
+            console.log("USUARIO RECIBIDO:", data.user);
+            console.log("ROL DEL USUARIO:", data.user.role);
+
+            // Guardar usuario en el Store
             login(data.user);
 
-            // 3. Redirigir al Dashboard
+            // Redirigir al Dashboard
             navigate('/');
             
         } catch (err) {

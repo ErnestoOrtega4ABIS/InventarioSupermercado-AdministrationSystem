@@ -6,10 +6,11 @@ export interface User {
     firstName: string;       // Antes teníamos 'name', ahora son dos campos
     lastName: string;
     email: string;
-    role: 'admin' | 'worker' | 'provider'; // Roles exactos del Backend
-    status: boolean;         // Antes 'active', en tu modelo es 'status'
+    role: 'admin' | 'worker' | 'provider' | 'manager'; // Roles exactos del Backend
+    supermarket?: string | { _id: string; name: string };
+    status: boolean;         
     googleId?: string;
-    image?: string;          // Opcional, por si decidimos mostrar avatar
+    image?: string;          
 }
 
 // SUPERMERCADO (Basado en SupermarketSchema)

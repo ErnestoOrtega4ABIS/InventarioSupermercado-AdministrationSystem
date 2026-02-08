@@ -4,27 +4,42 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, Store, Users, Settings, LogOut } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import clsx from 'clsx'; // Utilidad para clases condicionales
-
+import Swal from 'sweetalert2';
 export const Sidebar = () => {
     const { user, logout } = useAuthStore();
 
     // Definimos los enlaces. Podríamos ocultar algunos según el rol del usuario.
-    const navItems = [
-        { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { to: '/inventory', icon: Package, label: 'Inventario' },
-        // Solo Admin ve Supermercados y Usuarios
-        ...(user?.role === 'admin' ? [
-            { to: '/supermarkets', icon: Store, label: 'Supermercados' },
-            { to: '/users', icon: Users, label: 'Usuarios' },
-        ] : []),
-        { to: '/settings', icon: Settings, label: 'Configuración' },
-    ];
+const navItems = [
+    { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+    
+    { to: '/inventory', icon: Package, label: 'Inventario' },
+
+    ...((user?.role === 'admin' || user?.role === 'provider') ? [
+        { to: '/supermarkets', icon: Store, label: 'Supermercados' },
+    ] : []),
+
+    ...(user?.role === 'admin' ? [
+        { to: '/users', icon: Users, label: 'Usuarios' },
+    ] : []),
+
+    { to: '/settings', icon: Settings, label: 'Configuración' },
+];
 
     const handleLogout = () => {
-        const confirm = window.confirm("¿Estás seguro que deseas cerrar sesión?");
-        if (confirm) {
-            logout();
-        }
+        Swal.fire({
+            title: '¿Cerrar sesión?',
+            text: "¿Estás seguro que deseas salir del sistema?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, salir',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                logout();
+            }
+        });
     };
 
     return (

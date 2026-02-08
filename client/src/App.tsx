@@ -1,17 +1,16 @@
 /* src/App.tsx */
-
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
+import { SupermarketsPage } from './pages/SupermarketsPage'; // <--- IMPORTANTE
 import { useAuthStore } from './store/authStore';
-import { MainLayout } from './components/layout/MainLayout';
+import { MainLayout } from './components/layout/MainLayout'; // Asegúrate que la ruta sea correcta
 
 // Componente para proteger rutas (Guardian)
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isChecking } = useAuthStore();
 
   if (isChecking) {
-    // Spinner de carga mientras verificamos la sesión
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -29,12 +28,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
-  // Intentar recuperar la sesión al cargar la app
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-return (
+  return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -53,7 +51,8 @@ return (
               </div>
             } />
             
-            {/* Futuras Rutas */}
+            {/* Rutas del Sistema */}
+            <Route path="supermarkets" element={<SupermarketsPage />} />
             <Route path="inventory" element={<div>Página de Inventario (Próximamente)</div>} />
             <Route path="users" element={<div>Gestión de Usuarios</div>} />
             <Route path="settings" element={<div className="p-6">Panel de Configuración</div>} />
