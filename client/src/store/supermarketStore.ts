@@ -11,6 +11,7 @@ interface SupermarketState {
     fetchSupermarkets: () => Promise<void>;
     addSupermarket: (data: Partial<Supermarket>) => Promise<void>;
     deleteSupermarket: (id: string) => Promise<void>;
+    updateSupermarket: (id: string, data: Partial<Supermarket>) => Promise<void>;
 }
 
 export const useSupermarketStore = create<SupermarketState>((set) => ({
@@ -80,5 +81,33 @@ export const useSupermarketStore = create<SupermarketState>((set) => ({
                 Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
             }
         }
+    },
+
+    updateSupermarket: async (id, updatedData) => {
+        try {
+            // Asumimos que tu backend tiene la ruta PUT /supermarkets/:id
+            const { data } = await api.put(`/supermarkets/${id}`, updatedData);
+            
+            // Actualizamos la tarjeta específica en el estado de React
+            set((state) => ({
+                supermarkets: state.supermarkets.map(s => s._id === id ? data : s)
+            }));
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Actualizado!',
+                text: 'El supermercado se ha modificado correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<{ message: string }>;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: axiosError.response?.data?.message || 'No se pudo actualizar el supermercado'
+            });
+        }
     }
+
 }));
