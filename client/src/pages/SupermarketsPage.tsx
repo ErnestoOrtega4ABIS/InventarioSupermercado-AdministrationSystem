@@ -72,11 +72,10 @@ export const SupermarketsPage = () => {
                         {/* Contenedor de la Imagen */}
                         <div className="h-40 bg-gray-200 relative">
                             {supermarket.image ? (
-                                <img 
+                                <ImageLoader
                                     src={supermarket.image}
                                     alt={supermarket.name} 
                                     className="w-full h-full object-cover"
-                                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000' }}
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -140,6 +139,34 @@ export const SupermarketsPage = () => {
                 supermarketToEdit={supermarketToEdit} 
             />
 
+        </div>
+    );
+};
+
+const ImageLoader = ({ src, alt, className, onError }: { src: string; alt: string; className?: string; onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    return (
+        <div className="relative w-full h-full bg-gray-100">
+            {/* Spinner: Se muestra mientras la imagen no haya cargado */}
+            {!isLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-400"></div>
+                </div>
+            )}
+            
+            {/* Imagen: Invisible (opacity-0) hasta que carga, luego hace un fade-in (opacity-100) */}
+            <img 
+                src={src}
+                alt={alt}
+                onLoad={() => setIsLoaded(true)} // ¡La magia ocurre aquí!
+                onError={(e) => { 
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000';
+                    setIsLoaded(true); // Quitamos el spinner aunque falle
+                    onError?.(e);
+                }}
+                className={`transition-opacity duration-500 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className || ''}`}
+            />
         </div>
     );
 };
