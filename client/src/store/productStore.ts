@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { AxiosError } from 'axios';
 import api from '../api/axios';
-import type { Product } from '../types'; // Asumimos que agregarás IProduct a tus types
+import type { Product } from '../types';
 import Swal from 'sweetalert2';
 
 interface ProductState {
