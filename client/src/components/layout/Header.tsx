@@ -1,7 +1,7 @@
 /* src/components/layout/Header.tsx */
 
 import { useAuthStore } from '../../store/authStore';
-import { Bell, Search } from 'lucide-react';
+import { Bell } from 'lucide-react';
 
 export const Header = () => {
     const user = useAuthStore((state) => state.user);
@@ -10,12 +10,6 @@ export const Header = () => {
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
             {/* Barra de Búsqueda Global (Visual por ahora) */}
             <div className="relative w-96">
-                <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-                <input 
-                    type="text" 
-                    placeholder="Buscar productos, SKU..." 
-                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
-                />
             </div>
 
             {/* Perfil y Notificaciones */}

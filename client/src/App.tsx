@@ -9,6 +9,7 @@ import { UsersPage } from './pages/UserPage';
 import { LoginPage } from './pages/LoginPage';
 import { SupermarketsPage } from './pages/SupermarketsPage'; 
 import { InventoryPage } from './pages/InventoryPage'; 
+import Dashboard  from './pages/DashboardPage'; 
 
 // Componente para proteger rutas (Guardian)
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -48,12 +49,7 @@ function App() {
             </ProtectedRoute>
         }>
             {/* Dashboard (Ruta Index) */}
-            <Route index element={
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  <h1 className="text-2xl font-bold text-gray-800">Dashboard General</h1>
-                  <p className="text-gray-500 mt-2">Bienvenido al panel de control.</p>
-              </div>
-            } />
+            <Route index element={<Dashboard/>} />
             
             {/* Rutas del Sistema */}
             <Route path="supermarkets" element={<SupermarketsPage />} />

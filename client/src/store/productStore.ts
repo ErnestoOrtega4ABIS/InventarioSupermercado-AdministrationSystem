@@ -4,24 +4,71 @@ import api from '../api/axios';
 import type { Product } from '../types';
 import Swal from 'sweetalert2';
 
+// Agregamos la interfaz para los datos del Dashboard
+export interface DashboardData {
+    kpis: {
+        totalProducts: number;
+        totalValue: number;
+        totalCategories: number;
+        lowStockAlerts: number;
+    };
+    charts: {
+        productsByCategory: { name: string; value: number }[];
+    };
+    tables: {
+        lowestStock: Product[]; 
+        recentlyAdded: Product[];
+    };
+}
+
 interface ProductState {
     products: Product[];
     isLoading: boolean;
     
-    // Acciones
+    // Agregamos las nuevas variables de estado para el Dashboard
+    dashboardStats: DashboardData | null;
+    error: string | null;
+    
+    // Acciones originales
     fetchProducts: (supermarketId: string) => Promise<void>;
     addProduct: (productData: Partial<Product>) => Promise<void>;
     updateProduct: (id: string, productData: Partial<Product>) => Promise<void>;
     deleteProduct: (id: string) => Promise<void>;
+    
+    // 3. Agregamos la nueva acción para el Dashboard
+    fetchDashboardStats: (supermarketId: string) => Promise<void>;
 }
 
 export const useProductStore = create<ProductState>((set) => ({
     products: [],
     isLoading: false,
+    
+    // Inicializamos los nuevos estados
+    dashboardStats: null,
+    error: null,
 
+    // --- NUEVA FUNCIÓN PARA EL DASHBOARD ---
+    fetchDashboardStats: async (supermarketId: string) => {
+        if (!supermarketId) return;
+
+        set({ isLoading: true, error: null });
+        try {
+            // Asegúrate de que esta ruta coincida con la que creamos en Express
+            const { data } = await api.get(`/dashboard/stats/${supermarketId}`);
+            set({ dashboardStats: data, isLoading: false });
+        } catch (err: unknown) {
+            const axiosError = err as AxiosError<{ message: string }>;
+            console.error('[Error fetching dashboard stats]:', err);
+            set({ 
+                error: axiosError.response?.data?.message || 'Error al cargar las estadísticas', 
+                isLoading: false 
+            });
+        }
+    },
+
+    // --- TUS FUNCIONES ORIGINALES (Sin cambios) ---
     fetchProducts: async (supermarketId: string) => {
-        if (!supermarketId) return; // Prevención de errores si no hay ID
-
+        if (!supermarketId) return;
         set({ isLoading: true });
         try {
             const { data } = await api.get(`/products/supermarket/${supermarketId}`);
@@ -35,11 +82,7 @@ export const useProductStore = create<ProductState>((set) => ({
     addProduct: async (productData) => {
         try {
             const { data } = await api.post('/products', productData);
-            
-            set((state) => ({ 
-                products: [...state.products, data] 
-            }));
-            
+            set((state) => ({ products: [...state.products, data] }));
             Swal.fire({
                 icon: 'success',
                 title: '¡Producto Registrado!',
@@ -54,40 +97,22 @@ export const useProductStore = create<ProductState>((set) => ({
                 title: 'Error de Inventario',
                 text: axiosError.response?.data?.message || 'No se pudo crear el producto'
             });
-            throw error; // Lanzamos el error para que la Modal no se cierre si falla (ej. SKU duplicado)
+            throw error;
         }
     },
 
     updateProduct: async (id, productData) => {
         try {
             const { data } = await api.put(`/products/${id}`, productData);
-            
-            set((state) => ({
-                products: state.products.map(p => p._id === id ? data : p)
-            }));
-
-            // Tu backend manda un flag 'alert' si el stock es crítico. ¡Lo aprovechamos!
+            set((state) => ({ products: state.products.map(p => p._id === id ? data : p) }));
             if (data.alert) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: '¡Stock Crítico!',
-                    text: data.alertMessage,
-                });
+                Swal.fire({ icon: 'warning', title: '¡Stock Crítico!', text: data.alertMessage });
             } else {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Actualizado!',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+                Swal.fire({ icon: 'success', title: '¡Actualizado!', timer: 1500, showConfirmButton: false });
             }
         } catch (error: unknown) {
             const axiosError = error as AxiosError<{ message: string }>;
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: axiosError.response?.data?.message || 'No se pudo actualizar el producto'
-            });
+            Swal.fire({ icon: 'error', title: 'Error', text: axiosError.response?.data?.message || 'No se pudo actualizar el producto' });
             throw error;
         }
     },
@@ -107,12 +132,7 @@ export const useProductStore = create<ProductState>((set) => ({
         if (result.isConfirmed) {
             try {
                 await api.delete(`/products/${id}`);
-                
-                // Filtramos el producto retirado de la vista
-                set((state) => ({
-                    products: state.products.filter(p => p._id !== id)
-                }));
-
+                set((state) => ({ products: state.products.filter(p => p._id !== id) }));
                 Swal.fire('¡Retirado!', 'El producto fue dado de baja.', 'success');
             } catch (error: unknown) {
                 const axiosError = error as AxiosError<{ message: string }>;

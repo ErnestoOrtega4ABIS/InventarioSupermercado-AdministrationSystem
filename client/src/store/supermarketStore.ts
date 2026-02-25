@@ -7,6 +7,7 @@ import type { AxiosError } from 'axios';
 import Swal from 'sweetalert2'; // Importamos la librería de alertas
 
 interface SupermarketState {
+    activeSupermarketId: string | null;
     supermarkets: Supermarket[];
     isLoading: boolean;
     // Acciones
@@ -14,9 +15,12 @@ interface SupermarketState {
     addSupermarket: (data: Partial<Supermarket>) => Promise<void>;
     deleteSupermarket: (id: string) => Promise<void>;
     updateSupermarket: (id: string, data: Partial<Supermarket>) => Promise<void>;
+    setActiveSupermarket: (id: string) => void;
 }
 
 export const useSupermarketStore = create<SupermarketState>((set) => ({
+    activeSupermarketId: "6986313f49879bc2029f7f62",
+    setActiveSupermarket: (id) => set({ activeSupermarketId: id }),
     supermarkets: [],
     isLoading: false,
 
