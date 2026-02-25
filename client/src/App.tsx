@@ -1,11 +1,14 @@
 /* src/App.tsx */
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { LoginPage } from './pages/LoginPage';
-import { SupermarketsPage } from './pages/SupermarketsPage'; // <--- IMPORTANTE
+
 import { useAuthStore } from './store/authStore';
+
 import { MainLayout } from './components/layout/MainLayout'; // Asegúrate que la ruta sea correcta
 import { UsersPage } from './pages/UserPage';
+import { LoginPage } from './pages/LoginPage';
+import { SupermarketsPage } from './pages/SupermarketsPage'; 
+import { InventoryPage } from './pages/InventoryPage'; 
 
 // Componente para proteger rutas (Guardian)
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -54,7 +57,7 @@ function App() {
             
             {/* Rutas del Sistema */}
             <Route path="supermarkets" element={<SupermarketsPage />} />
-            <Route path="inventory" element={<div>Página de Inventario (Próximamente)</div>} />
+            <Route path="inventory" element={<InventoryPage/>} />
             <Route path="users" element={<UsersPage />} />
             <Route path="settings" element={<div className="p-6">Panel de Configuración</div>} />
         </Route>
