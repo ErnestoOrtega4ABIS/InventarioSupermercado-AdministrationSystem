@@ -1,7 +1,7 @@
 /* src/components/layout/Header.tsx */
 
 import { useAuthStore } from '../../store/authStore';
-import { Bell } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 
 export const Header = () => {
     const user = useAuthStore((state) => state.user);
@@ -15,9 +15,7 @@ export const Header = () => {
             {/* Perfil y Notificaciones */}
             <div className="flex items-center gap-6">
                 <button className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                    <Bell size={20} />
-                    {/* Puntito rojo de notificaciones (Hardcodeado por ahora) */}
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <NotificationBell />
                 </button>
 
                 <div className="flex items-center gap-3">
