@@ -1,6 +1,6 @@
 # 📦 StockMaster
 
-![Estado](https://img.shields.io/badge/Estado-En_Desarrollo-green)
+![Status](https://img.shields.io/badge/Status-In_Development-green)
 ![React](https://img.shields.io/badge/React-18-blue?logo=react)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-success?logo=node.js)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)
@@ -9,74 +9,75 @@
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=fff)
 ![Zustand](https://img.shields.io/badge/Zustand-443E38?logoColor=fff)
 
-**StockMaster** es un sistema profesional de gestión de inventarios multi-sucursal diseñado para optimizar el control de productos, auditar movimientos y prevenir el desabastecimiento mediante alertas en tiempo real.
+**StockMaster** is a professional multi-branch inventory management system designed to optimize product control, audit movements, and prevent stockouts through real-time alerts.
 
 ---
 
-## 🚀 Características Principales
+## 🚀 Key Features
 
-* **Gestión Multi-Sucursal:** Control de inventario independiente para diferentes locaciones o sucursales de supermercados, administrables desde una sola interfaz.
-* **Auditoría y Kardex (Historial de Movimientos):** Registro inmutable y automático de cada entrada (`IN`), salida (`OUT`) o ajuste (`ADJUST`) de mercancía para evitar mermas fantasma y tener un control estricto del almacén.
-* **Alertas de Stock Crítico:** Sistema de notificaciones en tiempo real que avisa a los administradores cuando un producto alcanza su límite mínimo de inventario.
-* **Dashboard Dinámico:** Panel de control con métricas clave, productos en reabastecimiento urgente y valor total del inventario.
-* **Soft Delete:** Eliminación lógica de productos para mantener la integridad referencial del historial contable.
+* **Multi-Branch Management:** Independent inventory control for different supermarket locations or branches, manageable from a single interface.
+* **Audit and Kardex (Movement History):** Immutable and automatic recording of every merchandise entry (`IN`), exit (`OUT`), or adjustment (`ADJUST`) to prevent phantom shrinkage and maintain strict warehouse control.
+* **Critical Stock Alerts:** Real-time notification system that alerts administrators when a product reaches its minimum inventory limit.
+* **Dynamic Dashboard:** Control panel with key metrics, urgently restocked products, and total inventory value.
+* **Soft Delete:** Logical deletion of products to maintain referential integrity within the accounting history.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Tech Stack
 
-El proyecto está dividido en dos aplicaciones principales utilizando el stack MERN (con algunas mejoras modernas):
+The project is divided into two main applications using the MERN stack (with some modern improvements):
 
 ### Frontend (`/client`)
-* **Core:** React.js con Vite
-* **Lenguaje:** TypeScript
-* **Gestor de Estado:** Zustand
-* **Estilos y UI:** Tailwind CSS, Headless UI, Heroicons
-* **Peticiones HTTP:** Axios con interceptores
+* **Core:** React.js with Vite
+* **Language:** TypeScript
+* **State Management:** Zustand
+* **Styles & UI:** Tailwind CSS, Headless UI, Heroicons
+* **HTTP Requests:** Axios with interceptors
 
 ### Backend (`/server`)
-* **Core:** Node.js con Express.js
-* **Lenguaje:** TypeScript
-* **Base de Datos:** MongoDB con Mongoose (ODM)
-* **Arquitectura:** Patrón MVC (Model-View-Controller)
+* **Core:** Node.js with Express.js
+* **Language:** TypeScript
+* **Database:** MongoDB with Mongoose (ODM)
+* **Architecture:** MVC Pattern (Model-View-Controller)
 
 ---
 
-## 📂 Estructura del Proyecto
+## 📂 Project Structure
 
-Este repositorio contiene tanto el código del cliente como el del servidor, separados en sus respectivos directorios para mantener una arquitectura limpia y modular:
+This repository contains both the client and server code, separated into their respective directories to maintain a clean and modular architecture:
 
 ```text
 /
-├── server/                 # API RESTful, Modelos y Controladores
+├── server/                 # RESTful API, Models, and Controllers
 │   ├── src/
-│   │   ├── config/         # Conexión a Base de Datos
-│   │   ├── controllers/    # Lógica de negocio (Products, Movements, etc.)
-│   │   ├── middleware/     # Middlewares (Autenticación, Manejo de errores)
-│   │   ├── models/         # Esquemas de Mongoose
-│   │   ├── routes/         # Endpoints de la API
-│   │   ├── utils/          # Helpers globales (ej. kardexLogger)
-│   │   └── index.ts        # Archivo principal de entrada de Express
-│   └── README.md           # Documentación específica del backend
+│   │   ├── config/         # Database Connection
+│   │   ├── controllers/    # Business logic (Products, Movements, etc.)
+│   │   ├── middleware/     # Middlewares (Authentication, Error handling)
+│   │   ├── models/         # Mongoose Schemas
+│   │   ├── routes/         # API Endpoints
+│   │   ├── utils/          # Global helpers (e.g., kardexLogger)
+│   │   └── index.ts        # Main Express entry file
+│   └── README.md           # Backend specific documentation
 │
-├── client/                 # Interfaz de Usuario (SPA)
+├── client/                 # User Interface (SPA)
 │   ├── src/
-│   │   ├── api/            # Configuración de Axios
-│   │   ├── components/     # Componentes UI modulares (inventory, layout, supermarkets, users)
-│   │   ├── pages/          # Vistas principales de enrutamiento
-│   │   ├── store/          # Estado global con Zustand
-│   │   ├── types/          # Interfaces y tipos de TypeScript
-│   │   └── App.tsx         # Enrutador y configuración raíz
-│   └── README.md           # Documentación específica del frontend
+│   │   ├── api/            # Axios Configuration
+│   │   ├── components/     # Modular UI components (inventory, layout, supermarkets, users)
+│   │   ├── pages/          # Main routing views
+│   │   ├── store/          # Global state with Zustand
+│   │   ├── types/          # TypeScript interfaces and types
+│   │   └── App.tsx         # Router and root configuration
+│   └── README.md           # Frontend specific documentation
 │
-└── README.md               # Documentación global (Este archivo)
+└── README.md               # Global documentation (This file)
+
 ```
 
-## ⚙️ Instalación del Proyecto
+## ⚙️ Project Installation
 
-Para correr este proyecto en entorno de desarrollo, necesitarás ejecutar ambos entornos por separado. Por favor, consulta la documentación específica de cada módulo para ver las variables de entorno necesarias:
+To run this project in a development environment, you will need to run both environments separately. Please refer to the specific documentation for each module to see the required environment variables:
 
-### Levantar el Backend
+### Run the Backend
 
 ```text
 cd server
@@ -84,7 +85,7 @@ npm install
 npm run dev
 
 ```
-### Levantar Front
+### Run the Frontend
 
 ```text
 cd client
@@ -92,8 +93,9 @@ npm install
 npm run dev
 ```
 
-### 👨‍💻 Autor y Contexto Académico
+### 👨‍💻 Author and Academic Context
 
-Ernesto Estudiante de Ingeniería en Tecnologías de la Información e Innovación Digital Universidad Politécnica de Durango (UNIPOLI DGO)
+Ernesto - Information Technology and Digital Innovation Engineering
+Student at Universidad Politécnica de Durango (UNIPOLI DGO).
 
-Desarrollado como solución tecnológica para la gestión profesional de inventarios y trazabilidad de mercancía.
+Developed as a technological solution for professional inventory management and merchandise traceability.
