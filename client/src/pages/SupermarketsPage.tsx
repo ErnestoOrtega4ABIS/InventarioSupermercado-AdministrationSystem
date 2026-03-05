@@ -6,6 +6,34 @@ import { Plus, MapPin, Phone, Trash2, Store, Edit } from 'lucide-react';
 import { SupermarketModal } from '../components/supermarkets/SupermarketModal';
 import type { Supermarket } from '../types/index';
 
+const ImageLoader = ({ src, alt, className, onError }: { src: string; alt: string; className?: string; onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    return (
+        <div className="relative w-full h-full bg-gray-100">
+            {/* Spinner: Se muestra mientras la imagen no haya cargado */}
+            {!isLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-400"></div>
+                </div>
+            )}
+            
+            {/* Imagen: Invisible (opacity-0) hasta que carga, luego hace un fade-in (opacity-100) */}
+            <img 
+                src={src}
+                alt={alt}
+                onLoad={() => setIsLoaded(true)} // ¡La magia ocurre aquí!
+                onError={(e) => { 
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000';
+                    setIsLoaded(true); // Quitamos el spinner aunque falle
+                    onError?.(e);
+                }}
+                className={`transition-opacity duration-500 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className || ''}`}
+            />
+        </div>
+    );
+};
+
 export const SupermarketsPage = () => {
     // Extraemos el estado y las funciones de nuestro store (Zustand)
     const { supermarkets, fetchSupermarkets, deleteSupermarket, isLoading } = useSupermarketStore();
@@ -32,7 +60,7 @@ export const SupermarketsPage = () => {
     };
 
     return (
-        <div className="space-y-6">
+    <div className="space-y-6">
             {/* --- Encabezado de la Sección --- */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -41,7 +69,7 @@ export const SupermarketsPage = () => {
                 </div>
                 <button 
                     onClick={handleOpenCreate} 
-                    className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95"
+                    className="flex items-center gap-2 bg-rose-700 text-white px-4 py-2 rounded-lg hover:bg-rose-800 transition-all shadow-md active:scale-95"
                 >
                     <Plus size={20} />
                     Nuevo Supermercado
@@ -51,7 +79,7 @@ export const SupermarketsPage = () => {
             {/* --- Estado de Carga (Spinner) --- */}
             {isLoading && (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-600"></div>
                 </div>
             )}
 
@@ -96,12 +124,14 @@ export const SupermarketsPage = () => {
                             {/* Detalles de contacto */}
                             <div className="space-y-2 text-sm text-gray-600">
                                 <div className="flex items-start gap-2">
-                                    <MapPin size={16} className="mt-0.5 text-blue-500" />
+                                    {/* Ícono cambiado a rose-600 */}
+                                    <MapPin size={16} className="mt-0.5 text-rose-600" />
                                     <span>{supermarket.address}</span>
                                 </div>
                                 {supermarket.phone && (
                                     <div className="flex items-center gap-2">
-                                        <Phone size={16} className="text-blue-500" />
+                                        {/* Ícono cambiado a rose-600 */}
+                                        <Phone size={16} className="text-rose-600" />
                                         <span>{supermarket.phone}</span>
                                     </div>
                                 )}
@@ -112,7 +142,7 @@ export const SupermarketsPage = () => {
                                 
                                 <button 
                                     onClick={() => handleOpenEdit(supermarket)}
-                                    className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                    className="p-2 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded-lg transition-colors"
                                     title="Editar"
                                 >
                                     <Edit size={18} />
@@ -143,30 +173,3 @@ export const SupermarketsPage = () => {
     );
 };
 
-const ImageLoader = ({ src, alt, className, onError }: { src: string; alt: string; className?: string; onError?: (e: React.SyntheticEvent<HTMLImageElement>) => void }) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    return (
-        <div className="relative w-full h-full bg-gray-100">
-            {/* Spinner: Se muestra mientras la imagen no haya cargado */}
-            {!isLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-400"></div>
-                </div>
-            )}
-            
-            {/* Imagen: Invisible (opacity-0) hasta que carga, luego hace un fade-in (opacity-100) */}
-            <img 
-                src={src}
-                alt={alt}
-                onLoad={() => setIsLoaded(true)} // ¡La magia ocurre aquí!
-                onError={(e) => { 
-                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000';
-                    setIsLoaded(true); // Quitamos el spinner aunque falle
-                    onError?.(e);
-                }}
-                className={`transition-opacity duration-500 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className || ''}`}
-            />
-        </div>
-    );
-};
