@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
 
 import User from '../models/User';
 import generateTokens from '../utils/generateToken';
@@ -213,7 +212,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
         const { token } = req.params;
         const { password } = req.body;
 
-        // 1. Buscar al usuario que tenga ese token Y que el token no haya expirado
+        // Buscar al usuario que tenga ese token Y que el token no haya expirado
         const user = await User.findOne({
             resetPasswordToken: token,
             resetPasswordExpire: { $gt: Date.now() } // $gt significa "Greater Than" (Mayor que ahora)
@@ -224,9 +223,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        // Encriptar la nueva contraseña
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+        user.password = password;
 
         // Limpiar los campos del token para que no se pueda volver a usar
         user.resetPasswordToken = undefined;

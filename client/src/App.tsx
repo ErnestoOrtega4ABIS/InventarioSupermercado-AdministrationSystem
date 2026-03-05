@@ -11,6 +11,8 @@ import { SupermarketsPage } from './pages/SupermarketsPage';
 import { InventoryPage } from './pages/InventoryPage'; 
 import Dashboard  from './pages/DashboardPage'; 
 import MovementHistory from './pages/MovementHistoryPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 
 // Componente para proteger rutas (Guardian)
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -25,7 +27,16 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return (
+            <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                
+                {/* Si intentan entrar a cualquier otra URL sin estar logueados, los manda al Login */}
+                <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+        );
   }
 
   return <>{children}</>;
@@ -57,6 +68,8 @@ function App() {
             <Route path="inventory" element={<InventoryPage/>} />
             <Route path="users" element={<UsersPage />} />
             <Route path="history" element={<MovementHistory />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         </Route>
         
         <Route path="*" element={<Navigate to="/login" />} />

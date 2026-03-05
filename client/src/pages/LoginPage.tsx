@@ -1,7 +1,7 @@
 /* src/pages/LoginPage.tsx */
 import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { LogIn, User, Lock, AlertCircle, PackageSearch } from 'lucide-react';
 import type { LoginResponse } from '../types';
@@ -86,14 +86,24 @@ export const LoginPage = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         className="w-full pl-11 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-800/20 focus:border-rose-800 outline-none transition-all placeholder-gray-400 text-gray-800 font-medium"
-                                        placeholder="admin@stockmaster.com"
+                                        placeholder="joedoe@example.com"
                                         required 
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-bold text-gray-700 block ml-1">Contraseña</label>
+                                {/* Contenedor Flex para el Label y el Enlace */}
+                                <div className="flex justify-between items-center px-1">
+                                    <label className="text-sm font-bold text-gray-700">Contraseña</label>
+                                    <Link 
+                                        to="/forgot-password" 
+                                        className="text-sm font-bold text-rose-700 hover:text-rose-900 transition-colors"
+                                    >
+                                        ¿Olvidaste tu contraseña?
+                                    </Link>
+                                </div>
+                                
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <Lock className="text-gray-400 group-focus-within:text-rose-700 transition-colors" size={20} />
