@@ -21,10 +21,12 @@ const PORT = process.env.PORT || 4000;
 //Conexión a BD
 connectDB();
 
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173'];
+
 // Middlewares
 app.use(cors({
-    origin: 'http://localhost:5173', 
-    credentials: true               
+    origin: allowedOrigins,
+    credentials: true              
 }));
 app.use(express.json()); 
 app.use(cookieParser());
