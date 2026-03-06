@@ -1,3 +1,5 @@
+/* src/pages/ForgotPasswordPage.tsx */
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
@@ -19,7 +21,7 @@ export const ForgotPasswordPage = () => {
         try {
             const { data } = await api.post('/auth/forgot-password', { email });
             setMessage(data.message || 'Se ha enviado un enlace a tu correo.');
-            setEmail(''); // Limpiamos el input
+            setEmail(''); // Clear the input
         } catch (err) {
             const error = err as AxiosError<{ message: string }>;
             setError(error.response?.data?.message || 'Error al procesar la solicitud');
@@ -30,7 +32,7 @@ export const ForgotPasswordPage = () => {
 
     return (
         <div className="relative min-h-screen flex items-center justify-center bg-gray-50 overflow-hidden p-4">
-            {/* Formas Degradadas de Fondo (Blobs) */}
+            {/* Background Gradient Shapes (Blobs) */}
             <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-gradient-to-br from-rose-400 to-rose-900 rounded-full mix-blend-multiply filter blur-[100px] opacity-60 pointer-events-none animate-pulse-slow"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[35rem] h-[35rem] bg-gradient-to-tl from-rose-950 via-rose-800 to-red-600 rounded-full mix-blend-multiply filter blur-[100px] opacity-50 pointer-events-none"></div>
 
