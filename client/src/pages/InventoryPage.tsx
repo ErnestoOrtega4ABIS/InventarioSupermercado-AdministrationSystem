@@ -1,3 +1,5 @@
+/* src/pages/InventoryPage.tsx */
+
 import { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2, Package, AlertTriangle, Store, Search } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -14,17 +16,17 @@ export const InventoryPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [productToEdit, setProductToEdit] = useState<Product | null>(null);
     
-    // Estado para saber de qué supermercado estamos viendo el inventario
+    // State to know which supermarket's inventory we are viewing
     const [selectedSupermarketId, setSelectedSupermarketId] = useState<string>('');
-    // Estado para barra de búsqueda local
+    // State for local search bar
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Lógica inicial de Roles y Set supermarket ID for manager/worker users
+    // Initial Role logic and Set supermarket ID for manager/worker users
     useEffect(() => {
         if (!user) return;
 
         if (user.role === 'admin' || user.role === 'provider') {
-            // Si es Admin, cargamos la lista de supermercados para el dropdown
+            // If Admin, load the supermarket list for the dropdown
             fetchSupermarkets();
         }
     }, [user, fetchSupermarkets]);
@@ -33,13 +35,13 @@ export const InventoryPage = () => {
     useEffect(() => {
             if (!user) return;
 
-            // Extraemos el ID del supermercado del usuario de forma segura
+            // Safely extract the user's supermarket ID
             const userSupermarketId = typeof user.supermarket === 'object' 
                 ? user.supermarket?._id 
                 : user.supermarket;
 
             if (user.role === 'admin' || user.role === 'provider') {
-                // Si es Admin o Proveedor, cargamos la lista de supermercados para el dropdown
+                // If Admin or Provider, load the supermarket list for the dropdown
                 fetchSupermarkets();
             } else if (userSupermarketId) {
                 setSelectedSupermarketId((prevId) => 
@@ -48,16 +50,16 @@ export const InventoryPage = () => {
             }
         }, [user, fetchSupermarkets]);
 
-    // Cada vez que cambie el supermercado seleccionado, traemos sus productos
+    // Fetch products whenever the selected supermarket changes
     useEffect(() => {
         if (selectedSupermarketId) {
             fetchProducts(selectedSupermarketId);
         }
     }, [selectedSupermarketId, fetchProducts]);
 
-    // Funciones de la Modal
+    // Modal Functions
     const handleOpenCreate = () => {
-        if (!selectedSupermarketId) return; // Protección
+        if (!selectedSupermarketId) return; // Protection
         setProductToEdit(null);
         setIsModalOpen(true);
     };
@@ -67,7 +69,7 @@ export const InventoryPage = () => {
         setIsModalOpen(true);
     };
 
-    // Filtrar productos por la barra de búsqueda (SKU o Nombre)
+    // Filter products by the search bar (SKU or Name)
     const filteredProducts = products.filter(p => 
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         p.sku.toLowerCase().includes(searchTerm.toLowerCase())
@@ -75,19 +77,18 @@ export const InventoryPage = () => {
 
     return (
     <div className="space-y-6">
-            {/* --- ENCABEZADO Y SELECTOR --- */}
+            {/* --- HEADER AND SELECTOR --- */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <div className="w-full md:w-auto space-y-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                            {/* Cambiado a rose-600 */}
                             <Package className="text-rose-600" /> 
                             Inventario
                         </h1>
                         <p className="text-gray-500">Gestiona los productos y el stock.</p>
                     </div>
 
-                    {/* Mostrar Selector SOLO a Admin y Provider */}
+                    {/* Show selector only ADMIN or Manager */}
                     {(user?.role === 'admin' || user?.role === 'provider') && (
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Sucursal:</label>
@@ -108,7 +109,7 @@ export const InventoryPage = () => {
                     )}
                 </div>
 
-                {/* Buscador y Botón Nuevo */}
+                {/* Searchbar and New Button */}
                 <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3">
                     <div className="relative">
                         <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
@@ -121,7 +122,7 @@ export const InventoryPage = () => {
                         />
                     </div>
                     
-                    {/* Provider NO puede crear productos */}
+                    {/* Provider CANT create products */}
                     {user?.role !== 'provider' && (
                         <button 
                             onClick={handleOpenCreate} 
@@ -135,7 +136,7 @@ export const InventoryPage = () => {
                 </div>
             </div>
 
-            {/* --- TABLA DE PRODUCTOS --- */}
+            {/* --- TABLE OF PRODUCTS --- */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-gray-600">
@@ -150,7 +151,7 @@ export const InventoryPage = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {/* ESTADOS DE CARGA Y VACÍO */}
+                            {/* STATE EMPTY */}
                             {!selectedSupermarketId ? (
                                 <tr>
                                     <td colSpan={6} className="py-16 text-center text-gray-500">
@@ -161,7 +162,6 @@ export const InventoryPage = () => {
                             ) : isLoadingProducts ? (
                                 <tr>
                                     <td colSpan={6} className="py-16 text-center">
-                                        {/* Spinner cambiado a rose-600 */}
                                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-600 mx-auto"></div>
                                     </td>
                                 </tr>
@@ -173,7 +173,7 @@ export const InventoryPage = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                /* RENDER DE PRODUCTOS */
+                                /* RENDER DE PRODUCTS */
                                 filteredProducts.map((product) => {
                                     const isLowStock = product.stock <= product.minStock;
 
