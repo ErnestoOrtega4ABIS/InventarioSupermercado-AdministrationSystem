@@ -1,14 +1,16 @@
+/* src/store/movementStore.ts */
+
 import { create } from 'zustand';
 import api from '../api/axios';
 
-// Definimos la interfaz de lo que recibimos del backend
+// Interface definition for data received from the backend
 export interface Movement {
     _id: string;
     product: {
         _id: string;
         name: string;
         sku: string;
-    } | null; // null por si el producto fue eliminado después
+    } | null; // null in case the product was deleted later
     supermarket: string;
     type: 'IN' | 'OUT' | 'ADJUST';
     quantity: number;
@@ -38,7 +40,7 @@ export const useMovementStore = create<MovementState>((set) => ({
         } catch (error: unknown) {
             console.error('[Error fetching movements]:', error);
             set({ 
-                error: error instanceof Error ? error.message : 'Error al cargar el historial', 
+                error: error instanceof Error ? error.message : 'Error loading history', 
                 isLoading: false 
             });
         }

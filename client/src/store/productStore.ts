@@ -1,3 +1,5 @@
+/* src/store/productStore.ts */
+
 import { create } from 'zustand';
 import { AxiosError } from 'axios';
 import api from '../api/axios';
@@ -6,7 +8,7 @@ import Swal from 'sweetalert2';
 
 import { useNotificationStore } from './notificationStore';
 
-// Agregamos la interfaz para los datos del Dashboard
+// Interface for Dashboard data
 export interface DashboardData {
     kpis: {
         totalProducts: number;
@@ -27,17 +29,17 @@ interface ProductState {
     products: Product[];
     isLoading: boolean;
     
-    // Agregamos las nuevas variables de estado para el Dashboard
+    // State variables for the Dashboard
     dashboardStats: DashboardData | null;
     error: string | null;
     
-    // Acciones originales
+    // Original Actions
     fetchProducts: (supermarketId: string) => Promise<void>;
     addProduct: (productData: Partial<Product>) => Promise<void>;
     updateProduct: (id: string, productData: Partial<Product>) => Promise<void>;
     deleteProduct: (id: string) => Promise<void>;
     
-    // 3. Agregamos la nueva acción para el Dashboard
+    // Dashboard Action
     fetchDashboardStats: (supermarketId: string) => Promise<void>;
 }
 
@@ -45,30 +47,30 @@ export const useProductStore = create<ProductState>((set) => ({
     products: [],
     isLoading: false,
     
-    // Inicializamos los nuevos estados
+    // Initializing new states
     dashboardStats: null,
     error: null,
 
-    // --- NUEVA FUNCIÓN PARA EL DASHBOARD ---
+    // --- DASHBOARD FUNCTION ---
     fetchDashboardStats: async (supermarketId: string) => {
         if (!supermarketId) return;
 
         set({ isLoading: true, error: null });
         try {
-            // Asegúrate de que esta ruta coincida con la que creamos en Express
+            // Ensure this route matches the one created in Express
             const { data } = await api.get(`/dashboard/stats/${supermarketId}`);
             set({ dashboardStats: data, isLoading: false });
         } catch (err: unknown) {
             const axiosError = err as AxiosError<{ message: string }>;
             console.error('[Error fetching dashboard stats]:', err);
             set({ 
-                error: axiosError.response?.data?.message || 'Error al cargar las estadísticas', 
+                error: axiosError.response?.data?.message || 'Error loading statistics', 
                 isLoading: false 
             });
         }
     },
 
-    // --- TUS FUNCIONES ORIGINALES (Sin cambios) ---
+    // --- PRODUCT CRUD FUNCTIONS ---
     fetchProducts: async (supermarketId: string) => {
         if (!supermarketId) return;
         set({ isLoading: true });
@@ -87,8 +89,8 @@ export const useProductStore = create<ProductState>((set) => ({
             set((state) => ({ products: [...state.products, data] }));
             Swal.fire({
                 icon: 'success',
-                title: '¡Producto Registrado!',
-                text: 'El producto se ha añadido al inventario.',
+                title: 'Product Registered!',
+                text: 'The product has been added to the inventory.',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -96,8 +98,8 @@ export const useProductStore = create<ProductState>((set) => ({
             const axiosError = error as AxiosError<{ message: string }>;
             Swal.fire({
                 icon: 'error',
-                title: 'Error de Inventario',
-                text: axiosError.response?.data?.message || 'No se pudo crear el producto'
+                title: 'Inventory Error',
+                text: axiosError.response?.data?.message || 'Could not create the product'
             });
             throw error;
         }
@@ -108,38 +110,38 @@ export const useProductStore = create<ProductState>((set) => ({
             const { data } = await api.put(`/products/${id}`, productData);
             set((state) => ({ products: state.products.map(p => p._id === id ? data : p) }));
             if (data.alert) {
-                Swal.fire({ icon: 'warning', title: '¡Stock Crítico!', text: data.alertMessage });
+                Swal.fire({ icon: 'warning', title: 'Critical Stock!', text: data.alertMessage });
                 useNotificationStore.getState().fetchNotifications(data.supermarket);
             } else {
-                Swal.fire({ icon: 'success', title: '¡Actualizado!', timer: 1500, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: 'Updated!', timer: 1500, showConfirmButton: false });
             }
         } catch (error: unknown) {
             const axiosError = error as AxiosError<{ message: string }>;
-            Swal.fire({ icon: 'error', title: 'Error', text: axiosError.response?.data?.message || 'No se pudo actualizar el producto' });
+            Swal.fire({ icon: 'error', title: 'Error', text: axiosError.response?.data?.message || 'Could not update the product' });
             throw error;
         }
     },
 
     deleteProduct: async (id) => {
         const result = await Swal.fire({
-            title: '¿Retirar producto?',
-            text: "El producto ya no estará disponible para esta sucursal.",
+            title: 'Remove product?',
+            text: "The product will no longer be available for this branch.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, retirar',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: 'Yes, remove',
+            cancelButtonText: 'Cancel'
         });
 
         if (result.isConfirmed) {
             try {
                 await api.delete(`/products/${id}`);
                 set((state) => ({ products: state.products.filter(p => p._id !== id) }));
-                Swal.fire('¡Retirado!', 'El producto fue dado de baja.', 'success');
+                Swal.fire('Removed!', 'The product was deactivated.', 'success');
             } catch (error: unknown) {
                 const axiosError = error as AxiosError<{ message: string }>;
-                Swal.fire('Error', axiosError.response?.data?.message || 'No se pudo eliminar.', 'error');
+                Swal.fire('Error', axiosError.response?.data?.message || 'Could not delete.', 'error');
             }
         }
     }

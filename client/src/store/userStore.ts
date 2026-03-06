@@ -13,7 +13,7 @@ interface ErrorResponse {
 interface UserState {
     users: User[];
     isLoading: boolean;
-    // Acciones
+    // Actions
     fetchUsers: () => Promise<void>;
     addUser: (data: Partial<User>) => Promise<void>;
     updateUser: (id: string, data: Partial<User>) => Promise<void>;
@@ -27,11 +27,11 @@ export const useUserStore = create<UserState>((set) => ({
     fetchUsers: async () => {
         set({ isLoading: true });
         try {
-            // Asumimos que en tu backend existe la ruta GET /api/users
+            // Assuming the backend provides the GET /api/users route
             const { data } = await api.get('/users');
             set({ users: data, isLoading: false });
         } catch (error) {
-            console.error('Error al obtener usuarios:', error);
+            console.error('Error fetching users:', error);
             set({ isLoading: false });
         }
     },
@@ -46,8 +46,8 @@ export const useUserStore = create<UserState>((set) => ({
             
             Swal.fire({
                 icon: 'success',
-                title: '¡Usuario Creado!',
-                text: 'El acceso ha sido generado exitosamente.',
+                title: 'User Created!',
+                text: 'The access has been generated successfully.',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -56,9 +56,9 @@ export const useUserStore = create<UserState>((set) => ({
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: axiosError.response?.data?.message || 'No se pudo crear el usuario'
+                text: axiosError.response?.data?.message || 'Could not create the user'
             });
-            throw error; // Lanzamos el error por si la modal necesita saber que falló
+            throw error; // Throwing error in case the modal needs to handle the failure
         }
     },
 
@@ -72,8 +72,8 @@ export const useUserStore = create<UserState>((set) => ({
 
             Swal.fire({
                 icon: 'success',
-                title: '¡Actualizado!',
-                text: 'Los datos del usuario se han modificado.',
+                title: 'Updated!',
+                text: 'User data has been successfully modified.',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -82,7 +82,7 @@ export const useUserStore = create<UserState>((set) => ({
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: axiosError.response?.data?.message || 'No se pudo actualizar el usuario'
+                text: axiosError.response?.data?.message || 'Could not update the user'
             });
             throw error;
         }
@@ -90,14 +90,14 @@ export const useUserStore = create<UserState>((set) => ({
 
     deleteUser: async (id) => {
         const result = await Swal.fire({
-            title: '¿Dar de baja al usuario?',
-            text: "El usuario perderá acceso al sistema (Soft Delete).",
+            title: 'Deactivate user?',
+            text: "The user will lose access to the system (Soft Delete).",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, dar de baja',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: 'Yes, deactivate',
+            cancelButtonText: 'Cancel'
         });
 
         if (result.isConfirmed) {
@@ -108,10 +108,10 @@ export const useUserStore = create<UserState>((set) => ({
                     users: state.users.filter(u => u._id !== id)
                 }));
 
-                Swal.fire('¡Baja exitosa!', 'El usuario ha sido desactivado.', 'success');
+                Swal.fire('Deactivation successful!', 'The user has been deactivated.', 'success');
             } catch (error: unknown) {
                 const axiosError = error as AxiosError<ErrorResponse>;
-                Swal.fire('Error', axiosError.response?.data?.message || 'No se pudo desactivar.', 'error');
+                Swal.fire('Error', axiosError.response?.data?.message || 'Could not deactivate user.', 'error');
             }
         }
     }

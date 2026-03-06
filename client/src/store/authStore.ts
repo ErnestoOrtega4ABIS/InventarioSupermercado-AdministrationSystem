@@ -8,13 +8,13 @@ interface AuthState {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    isChecking: boolean; // Para saber si estamos verificando la sesión al inicio
+    isChecking: boolean; // Used to determine if we are verifying the session on initial load
     error: string | null;
 
-    // Métodos (Actions)
-    login: (user: User) => void; // Recibe el usuario ya logueado desde el componente
+    // Methods (Actions)
+    login: (user: User) => void; // Receives the already logged-in user from the component
     logout: () => Promise<void>;
-    checkAuth: () => Promise<void>; // Verifica la cookie al recargar F5
+    checkAuth: () => Promise<void>; // Verifies the session cookie on page refresh (F5)
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isChecking: true, 
     error: null,
 
-    // Acción simple: Guardar el usuario en el estado
+    // Simple Action: Save the user in the state
     login: (user: User) => {
         set({ 
             user, 
@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         });
     },
 
-    // Acción: Cerrar sesión (Backend + Frontend)
+    // Action: Logout (Backend + Frontend)
     logout: async () => {
         set({ isLoading: true });
         try {
@@ -45,8 +45,8 @@ export const useAuthStore = create<AuthState>((set) => ({
                 isLoading: false 
             });
         } catch (error) {
-            console.error('Error al cerrar sesión', error);
-            // Igual limpiamos el estado aunque falle la petición
+            console.error('Error logging out', error);
+            // Clear state even if the request fails
             set({ 
                 user: null, 
                 isAuthenticated: false, 
@@ -55,11 +55,11 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     },
 
-    // Acción: Verificar sesión al recargar la página
+    // Action: Verify session when the page reloads
     checkAuth: async () => {
         set({ isChecking: true });
         try {
-            // Pide al backend el usuario actual basado en la cookie
+            // Request the current user from the backend based on the cookie
             const { data } = await api.get<User>('/auth/profile');
             set({ 
                 user: data, 
@@ -67,7 +67,7 @@ export const useAuthStore = create<AuthState>((set) => ({
                 isChecking: false 
             });
         } catch {
-            // Si falla, es que la cookie expiró o no existe
+            // If it fails, the cookie has either expired or does not exist
             set({ 
                 user: null, 
                 isAuthenticated: false, 

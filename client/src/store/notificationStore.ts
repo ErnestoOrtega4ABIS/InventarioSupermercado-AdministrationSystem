@@ -1,5 +1,7 @@
+/* src/store/notificationStore.ts */
+
 import { create } from 'zustand';
-import api from '../api/axios'; // Tu instancia configurada de axios
+import api from '../api/axios'; // Your configured axios instance
 
 interface INotification {
     _id: string;
@@ -21,7 +23,7 @@ interface NotificationState {
     isLoading: boolean;
     error: string | null;
 
-    // Acciones
+    // Actions
     fetchNotifications: (supermarketId: string) => Promise<void>;
     markAsRead: (id: string) => Promise<void>;
     deleteNotification: (id: string) => Promise<void>;
@@ -45,7 +47,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             });
         } catch (error: unknown) {
             set({ 
-                error: error instanceof Error ? error.message : 'Error al cargar notificaciones', 
+                error: error instanceof Error ? error.message : 'Error loading notifications', 
                 isLoading: false 
             });
         }
@@ -55,7 +57,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         try {
             await api.put(`/notifications/${id}/read`);
             
-            // Actualizamos el estado localmente para que sea instantáneo
+            // Update local state for an instant UI response
             const updatedNotifications = get().notifications.map((n) =>
                 n._id === id ? { ...n, read: true } : n
             );
@@ -65,7 +67,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                 unreadCount: updatedNotifications.filter((n) => !n.read).length,
             });
         } catch (error) {
-            console.error('Error al marcar como leída:', error);
+            console.error('Error marking notification as read:', error);
         }
     },
 
@@ -80,7 +82,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
                 unreadCount: remainingNotifications.filter((n) => !n.read).length,
             });
         } catch (error) {
-            console.error('Error al eliminar notificación:', error);
+            console.error('Error deleting notification:', error);
         }
     },
 

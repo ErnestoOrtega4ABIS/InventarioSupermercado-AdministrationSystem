@@ -4,13 +4,13 @@ import { create } from 'zustand';
 import api from '../api/axios';
 import type { Supermarket } from '../types';
 import type { AxiosError } from 'axios';
-import Swal from 'sweetalert2'; // Importamos la librería de alertas
+import Swal from 'sweetalert2'; // Importing the alerts library
 
 interface SupermarketState {
     activeSupermarketId: string | null;
     supermarkets: Supermarket[];
     isLoading: boolean;
-    // Acciones
+    // Actions
     fetchSupermarkets: () => Promise<void>;
     addSupermarket: (data: Partial<Supermarket>) => Promise<void>;
     deleteSupermarket: (id: string) => Promise<void>;
@@ -38,15 +38,15 @@ export const useSupermarketStore = create<SupermarketState>((set) => ({
     addSupermarket: async (newSupermarket) => {
         try {
             const { data } = await api.post('/supermarkets', newSupermarket);
-            // Actualizamos el estado local agregando el nuevo super al array
+            // Update local state by adding the new supermarket to the array
             set((state) => ({ 
                 supermarkets: [...state.supermarkets, data] 
             }));
             
             Swal.fire({
                 icon: 'success',
-                title: '¡Creado!',
-                text: 'El supermercado se ha registrado correctamente.',
+                title: 'Created!',
+                text: 'The supermarket has been successfully registered.',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -55,54 +55,54 @@ export const useSupermarketStore = create<SupermarketState>((set) => ({
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: axiosError.response?.data?.message || 'No se pudo crear el supermercado'
+                text: axiosError.response?.data?.message || 'Could not create the supermarket'
             });
         }
     },
 
     deleteSupermarket: async (id) => {
-        // Confirmación visual con SweetAlert2
+        // Visual confirmation with SweetAlert2
         const result = await Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción no se puede deshacer",
+            title: 'Are you sure?',
+            text: "This action cannot be undone",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
         });
 
         if (result.isConfirmed) {
             try {
                 await api.delete(`/supermarkets/${id}`);
                 
-                // Actualizar estado local (filtrar el eliminado)
+                // Update local state (filter out the deleted one)
                 set((state) => ({
                     supermarkets: state.supermarkets.filter(s => s._id !== id)
                 }));
 
-                Swal.fire('¡Eliminado!', 'El supermercado ha sido desactivado.', 'success');
+                Swal.fire('Deleted!', 'The supermarket has been deactivated.', 'success');
             } catch {
-                Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+                Swal.fire('Error', 'Could not delete the record.', 'error');
             }
         }
     },
 
     updateSupermarket: async (id, updatedData) => {
         try {
-            // Asumimos que tu backend tiene la ruta PUT /supermarkets/:id
+            // Assuming your backend has the PUT /supermarkets/:id route
             const { data } = await api.put(`/supermarkets/${id}`, updatedData);
             
-            // Actualizamos la tarjeta específica en el estado de React
+            // Update the specific card in the React state
             set((state) => ({
                 supermarkets: state.supermarkets.map(s => s._id === id ? data : s)
             }));
 
             Swal.fire({
                 icon: 'success',
-                title: '¡Actualizado!',
-                text: 'El supermercado se ha modificado correctamente.',
+                title: 'Updated!',
+                text: 'The supermarket has been successfully modified.',
                 timer: 2000,
                 showConfirmButton: false
             });
@@ -111,7 +111,7 @@ export const useSupermarketStore = create<SupermarketState>((set) => ({
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: axiosError.response?.data?.message || 'No se pudo actualizar el supermercado'
+                text: axiosError.response?.data?.message || 'Could not update the supermarket'
             });
         }
     }
