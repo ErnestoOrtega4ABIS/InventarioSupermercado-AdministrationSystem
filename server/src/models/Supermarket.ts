@@ -33,7 +33,7 @@ const SupermarketSchema: Schema = new Schema({
     },
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref: 'User', // Relación con la colección de Usuarios
+        ref: 'User', // Relation with User model
         required: true
     }
 }, {
