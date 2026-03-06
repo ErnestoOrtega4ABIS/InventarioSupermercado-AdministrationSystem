@@ -140,5 +140,19 @@ npm start
 
 * **Dashboard** (`/api/dashboard`): Aggregates data to provide real-time KPIs, charts, and low-stock alerts.
 
+---
+
+## 🚀 Key Features & Core Logic
+
+* **Authentication & Security:** Secure login system using **JWT (JSON Web Tokens)** for stateless authentication, combined with **Bcryptjs** for robust password hashing.
+* **Role-Based Access Control (RBAC):** Custom middleware to protect routes and restrict API actions based on user roles (`Admin`, `Manager`, `Provider`, `Worker`).
+* **Kardex Engine (Audit Trail):** An automated and immutable logging system that records every inventory transaction (`IN`, `OUT`, `ADJUST`), tracking the exact timestamp, previous stock, and new stock to prevent phantom shrinkage.
+* **Password Recovery Flow:** A complete and secure password reset mechanism generating time-sensitive crypto tokens (15-minute expiration) and sending real emails via **Nodemailer**.
+* **Dashboard Aggregation:** Complex **MongoDB aggregation pipelines** designed to instantly calculate KPIs such as total inventory value, critical stock alerts, and category distributions.
+* **Multi-Branch Data Isolation:** The database architecture allows for managing multiple supermarket locations independently, linking users and inventory specifically to their assigned branch.
+* **Soft Deletion:** Logical deactivation of products and users to strictly maintain referential integrity in the accounting and Kardex history.
+
+---
+
 ### 👨‍💻 Author
 Ernesto - Information Technology and Digital Innovation Engineering Student.

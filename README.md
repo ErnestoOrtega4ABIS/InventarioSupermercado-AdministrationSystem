@@ -96,6 +96,8 @@ npm install
 npm run dev
 ```
 
+---
+
 ### 👨‍💻 Author and Academic Context
 
 Ernesto - Information Technology and Digital Innovation Engineering
