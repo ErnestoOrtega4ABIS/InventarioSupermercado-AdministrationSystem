@@ -2,9 +2,10 @@
 
 ![Status](https://img.shields.io/badge/Status-In_Development-green)
 ![React](https://img.shields.io/badge/React-18-blue?logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-success?logo=node.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=fff)
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=fff)
 ![Zustand](https://img.shields.io/badge/Zustand-443E38?logoColor=fff)
