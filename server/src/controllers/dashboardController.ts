@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Product from '../models/Product';
 
-// @desc    Obtener todas las estadísticas del dashboard para un supermercado específico
+// @desc    Get dashboard statistics for a specific supermarket
 // @route   GET: /api/dashboard/stats/:supermarketId
 export const getDashboardStats = async (req: Request, res: Response) => {
     try {
@@ -10,7 +10,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         const id = Array.isArray(supermarketId) ? supermarketId[0] : supermarketId;
         const objectId = new mongoose.Types.ObjectId(id);
 
-        // Estadísticas Generales (Tarjetas KPI)
+        // Main Stats KPI Cards
         const generalStats = await Product.aggregate([
             { $match: { supermarket: objectId, active: true } },
             {
@@ -31,42 +31,40 @@ export const getDashboardStats = async (req: Request, res: Response) => {
             }
         ]);
 
-        // Alertas de Stock Bajo (Tarjetas KPI)
+        // Alerts KPI Card 
         const lowStockCount = await Product.countDocuments({
             supermarket: objectId,
             active: true,
             $expr: { $lte: ["$stock", "$minStock"] }
         });
 
-        // Productos por Categoría (Para la gráfica de Dona/Pastel)
+        // Products by Category for Chart
         const productsByCategory = await Product.aggregate([
             { $match: { supermarket: objectId, active: true } },
-            // Agrupamos por el nombre de la categoría y contamos cuántos hay
             { $group: { _id: "$category", count: { $sum: 1 } } },
-            // Renombramos _id a "name" y count a "value" (Formato ideal para librerías de gráficas en React/Angular)
             { $project: { _id: 0, name: "$_id", value: "$count" } } 
         ]);
 
         const lowestStockProducts = await Product.find({ 
             supermarket: objectId, 
             active: true,
-            $expr: { $lte: ["$stock", "$minStock"] } // Solo jala los que están en crítico
+            $expr: { $lte: ["$stock", "$minStock"] } // Only if stock is less than or equal to minStock
         })
         .sort({ stock: 1 }) 
-        .limit(8); // Puedes subir el límite si quieres ver más alertas críticas
+        .limit(8); // Could be more than 8 if there are ties in stock levels
         
-        // Agregados Recientemente (Para tabla de "Novedades")
+        // Recently Added Products Table
         const recentProducts = await Product.find({ supermarket: objectId, active: true })
-            .sort({ createdAt: -1 }) // Ordenamos por fecha de creación (los más nuevos primero)
+            .sort({ createdAt: -1 }) // Order by most recent
             .limit(5)
             .select('name category price createdAt');
 
-        // Preparamos la respuesta final
+        // Prepare the main stats, ensuring we have default values if no products exist
         const stats = generalStats.length > 0 
             ? generalStats[0] 
             : { totalProducts: 0, totalValue: 0, totalCategories: 0 };
         
-        // Enviamos todo en un solo objeto JSON
+        // Send all the data in a structured format for the frontend
         res.status(200).json({
             kpis: {
                 totalProducts: stats.totalProducts,
