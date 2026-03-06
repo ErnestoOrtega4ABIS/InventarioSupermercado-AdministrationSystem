@@ -1,37 +1,39 @@
 // src/pages/UsersPage.tsx
 import { useEffect, useState } from 'react';
 import { useUserStore } from '../store/userStore';
-import { Plus, Edit, Trash2, User as  Store } from 'lucide-react';
+import { Plus, Edit, Trash2, User as Store } from 'lucide-react';
 import { UserModal } from '../components/users/UserModal';
 import type { User } from '../types';
 
 export const UsersPage = () => {
+    // Extract state and actions from the user store (Zustand)
     const { users, fetchUsers, deleteUser, isLoading } = useUserStore();
     
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [userToEdit, setUserToEdit] = useState<User | null>(null);
 
+    // Fetch the list of users when the component mounts
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
 
     const handleOpenCreate = () => {
-        setUserToEdit(null);
+        setUserToEdit(null); // Clear selection to show a blank form
         setIsModalOpen(true);
     };
 
     const handleOpenEdit = (user: User) => {
-        setUserToEdit(user);
+        setUserToEdit(user); // Pass the selected user data to the modal
         setIsModalOpen(true);
     };
 
-    // Función para renderizar el nombre del rol bonito
+    // Helper function to render formatted role badges with specific colors
     const renderRoleBadge = (role: string) => {
         const roles: Record<string, { label: string, color: string }> = {
             admin: { label: 'Admin', color: 'bg-purple-100 text-purple-700 border-purple-200' },
-            manager: { label: 'Gerente', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-            worker: { label: 'Trabajador', color: 'bg-green-100 text-green-700 border-green-200' },
-            provider: { label: 'Proveedor', color: 'bg-orange-100 text-orange-700 border-orange-200' }
+            manager: { label: 'Manager', color: 'bg-blue-100 text-blue-700 border-blue-200' },
+            worker: { label: 'Worker', color: 'bg-green-100 text-green-700 border-green-200' },
+            provider: { label: 'Provider', color: 'bg-orange-100 text-orange-700 border-orange-200' }
         };
         const r = roles[role] || { label: role, color: 'bg-gray-100 text-gray-700' };
         
@@ -58,7 +60,7 @@ export const UsersPage = () => {
                 </button>
             </div>
 
-            {/* Contenedor de la Tabla */}
+            {/* Table Container */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm text-gray-600">
@@ -75,7 +77,7 @@ export const UsersPage = () => {
                             {isLoading && users.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="py-10 text-center">
-                                        {/* Spinner actualizado a rose-600 */}
+                                        {/* Loading spinner updated to rose-600 */}
                                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-rose-600 mx-auto"></div>
                                     </td>
                                 </tr>
@@ -87,10 +89,10 @@ export const UsersPage = () => {
                                 users.map((user) => (
                                     <tr key={user._id} className="hover:bg-gray-50 transition-colors">
                                         
-                                        {/* Nombre y Avatar */}
+                                        {/* Name and Avatar */}
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                {/* Avatar actualizado a tonos rose */}
+                                                {/* Avatar updated to rose theme */}
                                                 <div className="h-10 w-10 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center font-bold">
                                                     {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                                                 </div>
@@ -103,32 +105,32 @@ export const UsersPage = () => {
                                             </div>
                                         </td>
 
-                                        {/* Email */}
+                                        {/* Contact (Email) */}
                                         <td className="px-6 py-4">
                                             {user.email}
                                         </td>
 
-                                        {/* Rol (Badge) */}
+                                        {/* Role Badge */}
                                         <td className="px-6 py-4">
                                             {renderRoleBadge(user.role)}
                                         </td>
 
-                                        {/* Supermercado */}
+                                        {/* Supermarket Assignment */}
                                         <td className="px-6 py-4">
                                             {user.role === 'admin' || user.role === 'provider' ? (
-                                                <span className="text-gray-400 italic">Global (Aplica a todos)</span>
+                                                <span className="text-gray-400 italic">Global (Applies to all)</span>
                                             ) : (
                                                 <div className="flex items-center gap-2">
                                                     <Store size={16} className="text-gray-400" />
                                                     {typeof user.supermarket === 'object' 
                                                         ? user.supermarket?.name 
-                                                        : <span className="text-red-400 text-xs">Sin asignar</span>
+                                                        : <span className="text-red-400 text-xs">Unassigned</span>
                                                     }
                                                 </div>
                                             )}
                                         </td>
 
-                                        {/* Acciones */}
+                                        {/* Action Buttons */}
                                         <td className="px-6 py-4 text-center">
                                             <div className="flex items-center justify-center gap-2">
                                                 <button 
