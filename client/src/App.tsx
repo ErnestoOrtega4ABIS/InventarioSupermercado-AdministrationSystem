@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import { useAuthStore } from './store/authStore';
 
-import { MainLayout } from './components/layout/MainLayout'; // Asegúrate que la ruta sea correcta
+import { MainLayout } from './components/layout/MainLayout'; // Ensure the path is correct
 import { UsersPage } from './pages/UserPage';
 import { LoginPage } from './pages/LoginPage';
 import { SupermarketsPage } from './pages/SupermarketsPage'; 
@@ -14,7 +14,7 @@ import MovementHistory from './pages/MovementHistoryPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 
-// Componente para proteger rutas (Guardian)
+// Route Guard Component (Guardian)
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isChecking } = useAuthStore();
 
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
                 
-                {/* Si intentan entrar a cualquier otra URL sin estar logueados, los manda al Login */}
+                {/* Redirect any other URL to Login if not authenticated */}
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
         );
@@ -54,16 +54,16 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Rutas Protegidas envueltas en el Layout */}
+        {/* Protected Routes wrapped in MainLayout */}
         <Route path="/" element={
             <ProtectedRoute>
               <MainLayout />
             </ProtectedRoute>
         }>
-            {/* Dashboard (Ruta Index) */}
+            {/* Dashboard (Index Route) */}
             <Route index element={<Dashboard/>} />
             
-            {/* Rutas del Sistema */}
+            {/* System Routes */}
             <Route path="supermarkets" element={<SupermarketsPage />} />
             <Route path="inventory" element={<InventoryPage/>} />
             <Route path="users" element={<UsersPage />} />
