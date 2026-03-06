@@ -46,7 +46,7 @@ client/
 
 ```
 
-
+---
 
 ## 📦 Main Libraries & Technologies
 * **React 18:** Core UI library for building the component tree.

@@ -61,6 +61,8 @@ server/
 └── tsconfig.json           # TypeScript compiler configuration
 ```
 
+---
+
 ## 📦 Main Libraries & Technologies
 * **Express (v5.2.1):** Fast, unopinionated, minimalist web framework for Node.js.
 
