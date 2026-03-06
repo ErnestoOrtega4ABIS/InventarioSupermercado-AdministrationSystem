@@ -127,6 +127,8 @@ Starts the compiled Node.js server. You must run npm run build first.
 npm start
 ```
 
+---
+
 ## 📡 API Modules Overview
 * **Auth** (`/api/auth`): Handles login, logout, JWT generation, and the password recovery flow (forgot/reset password).
 
