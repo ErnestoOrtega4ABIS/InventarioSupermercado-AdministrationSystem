@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+//Start Connection with MongoDB
 export const connectDB = async () => {
     try {
         const dbUrl = process.env.MONGO_URI || 'mongodb://localhost:27017/inventario_supermercado';
