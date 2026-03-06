@@ -7,23 +7,23 @@ interface EmailOptions {
 }
 
 export const sendEmail = async (options: EmailOptions) => {
-    // Crear el transportador (Configuración de tu correo)
+    // Create the transporter using your email service configuration
     const transporter = nodemailer.createTransport({
-        service: 'Gmail', // Usaremos Gmail para desarrollo
+        service: 'Gmail', // We used Gmail as the email service, but you can use any other (e.g., Outlook, Yahoo) by changing this value and providing the appropriate configuration.
         auth: {
-            user: process.env.EMAIL_USER, // Tu correo
-            pass: process.env.EMAIL_PASS, // Tu contraseña de aplicación
+            user: process.env.EMAIL_USER, // Your email o app email
+            pass: process.env.EMAIL_PASS, // Your app password
         },
     });
 
-    // Definir las opciones del correo
+    // Define the options for the email
     const mailOptions = {
         from: '"StockMaster Admin" <no-reply@stockmaster.com>',
         to: options.email,
         subject: options.subject,
-        html: options.message, // Usamos HTML para que el correo se vea profesional
+        html: options.message, // We used HTML to allow for better formatting of the email content
     };
 
-    // Enviar el correo
+    // Send the email
     await transporter.sendMail(mailOptions);
 };
