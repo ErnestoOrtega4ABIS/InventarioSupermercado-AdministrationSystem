@@ -23,11 +23,11 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
 
     if (token) {
         try {
-            // Decodificar el token
+            // Decodify token and get user from it
             const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as DecodedToken;
 
-            // Buscar usuario en BD y adjuntarlo a la request
-            // Excluimos password y campos sensibles
+            // Search user by ID and attach to req.user, excluding password and sensitive fields
+            // Exclude password and other sensitive fields
             const user = await User.findById(decoded.userId).select('-password');
             
             if (!user) {
@@ -45,7 +45,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
     }
 };
 
-// Middleware para verificar Roles
+// Middleware for admin-only routes
 export const adminOnly = (req: Request, res: Response, next: NextFunction) => {
     if (req.user && req.user.role === 'admin') {
         next();
@@ -54,10 +54,10 @@ export const adminOnly = (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-// @desc    Autorizar por roles
+// @desc    Auth middleware to check if user has one of the allowed roles
 export const authorizeRoles = (...roles: string[]) => {
     return (req: Request, res: Response, next: NextFunction): void => {
-        // Verificamos si el usuario existe y si su rol está en la lista de permitidos
+        // Verify that user is authenticated and has a role
         if (!req.user || !roles.includes(req.user.role)) {
             res.status(403).json({ 
                 message: `El rol '${req.user?.role}' no tiene permisos para acceder a este recurso` 
