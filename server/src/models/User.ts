@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// Definimos la interfaz de TypeScript (Tipado fuerte)
+// Define the IUser interface extending Mongoose's Document
 export interface IUser extends Document {
     firstName: string;
     lastName: string;
@@ -13,13 +13,13 @@ export interface IUser extends Document {
     googleId?: string;
     //Soft Delete
     deleteDate?: Date; 
-    // Tokens para recuperar contraseña (Requerimiento de "Olvidar Contraseña")
+    // Tokens if user requests password reset
     resetPasswordToken?: string;
     resetPasswordExpire?: Date;
     matchPassword: (enteredPassword: string) => Promise<boolean>;
 }
 
-//Definimos el Esquema de Mongoose
+//Define if the user is required to have a supermarket reference based on their role
 const UserSchema: Schema = new Schema({
     firstName: { 
         type: String, 
@@ -74,7 +74,7 @@ const UserSchema: Schema = new Schema({
     versionKey: false
 });
 
-// Middleware (Hook) Pre-Save: Encriptar contraseña antes de guardar
+// Middleware (Hook) Pre-Save: Encrypt password before saving the user document
 UserSchema.pre<IUser>('save', async function (this: IUser) {
     if (!this.isModified('password') || !this.password) {
         return;
@@ -83,7 +83,7 @@ UserSchema.pre<IUser>('save', async function (this: IUser) {
     this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Método para comparar contraseñas (Login)
+// Method to compare entered password with hashed password in the database
 UserSchema.methods.matchPassword = async function (enteredPassword: string): Promise<boolean> {
     if (!this.password) return false;
     return await bcrypt.compare(enteredPassword, this.password);
