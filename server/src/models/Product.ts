@@ -1,10 +1,10 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
-//SKU: Codigo unico para cada producto generado por empresas
+//SKU: Unique code for the product, often a barcode or unique identifier. It is required and must be unique within the same supermarket. This allows different supermarkets to have products with the same SKU without conflict.
 
 export interface IProduct extends Document {
     name: string;
-    sku: string; // Código de barras o identificador único
+    sku: string; // Unique code for the product, required and unique within the same supermarket
     description?: string;
     price: number;
     stock: number;     
@@ -59,8 +59,8 @@ const ProductSchema: Schema = new Schema({
     versionKey: false
 });
 
-// Índice compuesto para evitar SKUs duplicados DENTRO del mismo supermercado
-// (Dos supermercados diferentes sí pueden tener el mismo SKU de Producto)
+// Compound index to ensure SKU uniqueness within the same supermarket
+// (Two supermarkets could have the same SKU, but a single supermarket cannot have duplicate SKUs)
 ProductSchema.index({ sku: 1, supermarket: 1 }, { unique: true });
 
 export default mongoose.model<IProduct>('Product', ProductSchema);
