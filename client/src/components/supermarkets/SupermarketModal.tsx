@@ -15,7 +15,7 @@ export const SupermarketModal = ({ isOpen, onClose, supermarketToEdit }: Superma
     const { addSupermarket, updateSupermarket } = useSupermarketStore();
     const [isLoading, setIsLoading] = useState(false);
 
-    // Inicialización 
+    // Inicialization 
     const [formData, setFormData] = useState<Partial<Supermarket>>({
         name: '',
         address: '',
@@ -23,16 +23,16 @@ export const SupermarketModal = ({ isOpen, onClose, supermarketToEdit }: Superma
         active: true
     });
 
-    // Efecto controlado: Solo llenamos datos cuando la modal se ABRE
+    // Controlled effect: We only fill in data when the modal OPENS.
     useEffect(() => {
         if (isOpen) {
             if (supermarketToEdit) {
                 setFormData(supermarketToEdit); // Modo Editar
             } else {
-                setFormData({ name: '', address: '', phone: '', active: true }); // Modo Crear
+                setFormData({ name: '', address: '', phone: '', active: true }); // Create Mode
             }
         }
-    }, [isOpen, supermarketToEdit]); // Dependemos de isOpen y supermarketToEdit
+    }, [isOpen, supermarketToEdit]); // We depend on isOpen and supermarketToEdit
 
     if (!isOpen) return null;
 
@@ -40,7 +40,7 @@ export const SupermarketModal = ({ isOpen, onClose, supermarketToEdit }: Superma
         e.preventDefault();
         setIsLoading(true);
         
-        // Decidimos qué función llamar basados en si hay un super para editar
+        // We decide which function to call based on whether there is a super to edit.
         if (supermarketToEdit) {
             await updateSupermarket(supermarketToEdit._id, formData);
         } else {
@@ -55,7 +55,7 @@ export const SupermarketModal = ({ isOpen, onClose, supermarketToEdit }: Superma
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 
-                {/* Encabezado Dinámico */}
+                {/* Dinamic Header */}
                 <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                     <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                         <Store className="text-rose-600" size={24} />
@@ -68,7 +68,7 @@ export const SupermarketModal = ({ isOpen, onClose, supermarketToEdit }: Superma
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     
-                    {/* Campos del formulario */}
+                    {/* Form Fields */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la Sucursal</label>
                         <div className="relative">
@@ -108,7 +108,7 @@ export const SupermarketModal = ({ isOpen, onClose, supermarketToEdit }: Superma
                         </div>
                     </div>
 
-                    {/* Checkbox de Estado (Solo visible al editar) */}
+                    {/* Status checkbox (Only visible when editing) */}
                     {supermarketToEdit && (
                         <div className="flex items-center gap-2 mt-2">
                             <input 
