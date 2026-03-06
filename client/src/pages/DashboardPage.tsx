@@ -1,3 +1,5 @@
+/* src/pages/Dashboard.tsx */
+
 import { useEffect } from 'react';
 import { useProductStore } from '../store/productStore';
 import { useSupermarketStore } from '../store/supermarketStore';
@@ -6,31 +8,31 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
 
 const Dashboard = () => {
-    // --- ESTADO GLOBAL: Supermercados ---
+    // --- GLOBAL STATE: Supermarkets ---
     const supermarkets = useSupermarketStore((state) => state.supermarkets);
     const activeSupermarketId = useSupermarketStore((state) => state.activeSupermarketId);
     const fetchSupermarkets = useSupermarketStore((state) => state.fetchSupermarkets);
     const setActiveSupermarket = useSupermarketStore((state) => state.setActiveSupermarket);
 
-    // --- ESTADO GLOBAL: Productos/Stats ---
+    // --- GLOBAL STATE: Products/Stats ---
     const dashboardStats = useProductStore((state) => state.dashboardStats);
     const isLoading = useProductStore((state) => state.isLoading);
     const error = useProductStore((state) => state.error);
     const fetchDashboardStats = useProductStore((state) => state.fetchDashboardStats);
 
-    // Cargar la lista de supermercados al montar el componente
+    // Load the supermarket list on component mount
     useEffect(() => {
         fetchSupermarkets();
     }, [fetchSupermarkets]);
 
-    // Cargar stats cada vez que cambie el supermercado seleccionado
+    // Load stats whenever the selected supermarket changes
     useEffect(() => {
         if (activeSupermarketId) {
             fetchDashboardStats(activeSupermarketId);
         }
     }, [activeSupermarketId, fetchDashboardStats]);
 
-    // Manejo de estados de carga y error
+    // Handling loading and error states
     if (isLoading && !dashboardStats) {
         return <div className="p-8 text-center text-gray-500 animate-pulse">Cargando StockMaster...</div>;
     }
@@ -52,7 +54,7 @@ const Dashboard = () => {
     return (
         <div className="p-6 bg-gray-50 min-h-screen font-sans">
             
-            {/* --- Encabezado Dinámico --- */}
+            {/* --- Dynamic Header --- */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Resumen del Inventario</h1>
@@ -84,34 +86,34 @@ const Dashboard = () => {
                 <div className="text-center py-20 text-gray-400">Selecciona una sucursal para ver los datos.</div>
             ) : (
                 <>
-                    {/* --- SECCIÓN 1: Tarjetas KPI --- */}
+                    {/* --- SECTION 1: KPI Cards --- */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                        {/* Cambiado de blue-500 a rose-800 (Guinda) */}
+                        {/* Changed from blue-500 to rose-800 (Wine) */}
                         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-rose-800">
                             <h3 className="text-sm text-gray-500 font-medium">Productos Totales</h3>
                             <p className="text-3xl font-bold text-gray-800">{dashboardStats.kpis.totalProducts}</p>
                         </div>
-                        {/* Mantenemos verde por ser dinero/valor */}
+                        {/* Kept green as it represents money/value */}
                         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
                             <h3 className="text-sm text-gray-500 font-medium">Valor Total</h3>
                             <p className="text-3xl font-bold text-gray-800">${dashboardStats.kpis.totalValue.toLocaleString()}</p>
                         </div>
-                        {/* Cambiado de purple-500 a rose-600 para mantener la armonía de la paleta cálida */}
+                        {/* Changed from purple-500 to rose-600 to maintain warm palette harmony */}
                         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-rose-600">
                             <h3 className="text-sm text-gray-500 font-medium">Categorías</h3>
                             <p className="text-3xl font-bold text-gray-800">{dashboardStats.kpis.totalCategories}</p>
                         </div>
-                        {/* Mantenemos rojo por ser alerta de stock crítico */}
+                        {/* Kept red as it represents critical stock alert */}
                         <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-500">
                             <h3 className="text-sm text-gray-500 font-medium">Stock Crítico</h3>
                             <p className="text-3xl font-bold text-red-600">{dashboardStats.kpis.lowStockAlerts}</p>
                         </div>
                     </div>
 
-                    {/* --- SECCIÓN 2: Gráficas y Tablas --- */}
+                    {/* --- SECTION 2: Charts & Tables --- */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         
-                        {/* Gráfica de Categorías */}
+                        {/* Categories Chart */}
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                             <h2 className="text-lg font-bold mb-4 text-gray-700">Distribución por Categoría</h2>
                             <div className="h-72">
@@ -134,7 +136,7 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        {/* Tabla de Reabastecimiento Urgente */}
+                        {/* Urgent Restock Table */}
                         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                             <h2 className="text-lg font-bold mb-4 text-red-600 flex items-center gap-2">
                                 <span className="relative flex h-3 w-3">
