@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 import bcrypt from 'bcryptjs';
 
-// @desc    Obtener lista de todos los usuarios
+// @desc    Get all users (with role-based access control)
 // @route   GET /api/users
-// @access  Privado (Idealmente solo Admin)
+// @access  Private (Ideally only Admin)
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
     try {
         if (!req.user) {
@@ -12,16 +12,16 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const { role, supermarket } = req.user; // Obtenemos los datos de quien hace la petición
+        const { role, supermarket } = req.user; // Get role and supermarket from authenticated user
 
-        let query = {}; // Por defecto, una consulta vacía (trae todo)
+        let query = {}; // By default, an empty query (fetches all)
 
-        // LÓGICA DE NEGOCIO PARA VER USUARIOS:
+        // BUSINESS LOGIC FOR VIEWING USERS:
         if (role === 'manager') {
-            // Si es manager, obligatoriamente solo puede ver a los de SU supermercado
+            // If the user is a manager, they can only see users from their assigned supermarket
             query = { supermarket: supermarket };
         } 
-        // Si es 'admin', la query se queda vacía y trae a TODOS.
+        // If the user is an admin, the query remains empty and fetches all users.
 
         const users = await User.find(query)
             .select('-password')
@@ -34,14 +34,14 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// @desc    Crear un nuevo usuario (Trabajador, Gerente, etc.)
+// @desc    Create a new user (Worker, Manager, etc.)
 // @route   POST /api/users
-// @access  Privado (Idealmente solo Admin)
+// @access  Private (Ideally only Admin)
 export const createUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { firstName, lastName, email, password, role, supermarket, active } = req.body;
 
-        // Verificación de existencia para evitar duplicados
+        // Verify that the email is not already registered
         const userExists = await User.findOne({ email });
         if (userExists) {
             res.status(400).json({ message: 'El correo proporcionado ya está registrado' });
@@ -49,19 +49,19 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         }
 
 
-        // Creación del registro en base de datos
+        // Create the user with hashed password
         const newUser = await User.create({
             firstName,
             lastName,
             email,
             password: password,
             role: role || 'worker',
-            // Si el rol es global (admin/provider) o no enviaron sucursal, lo dejamos indefinido
+            // If the role is 'worker' or 'manager', we expect a supermarket ID. For 'admin' or 'provider', it should be null.
             supermarket: supermarket || undefined, 
             status: active ?? true
         });
 
-        // Recuperamos el usuario recién creado con sus relaciones (populate)
+        // Populate the supermarket field before sending the response
         const populatedUser = await User.findById(newUser._id)
             .select('-password')
             .populate('supermarket', 'name');
@@ -73,32 +73,32 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     }
 };
 
-// @desc    Actualizar datos o rol de un usuario existente
+// @desc    Update a user (Worker, Manager, etc.)
 // @route   PUT /api/users/:id
-// @access  Privado (Idealmente solo Admin)
+// @access  Private (Ideally only Admin)
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
         const { password, ...updateData } = req.body;
 
-        // Manejo condicional de la contraseña (solo si el cliente envía una nueva)
+        // Conditional management of password update: Only hash if a new password is provided
         if (password) {
             const salt = await bcrypt.genSalt(10);
             updateData.password = await bcrypt.hash(password, salt);
         }
 
-        // Limpieza de relaciones inconsistentes
-        // Si el usuario cambia a un rol global, debemos desvincularlo de cualquier sucursal
+        // Clean up the updateData based on role changes:
+        // If the role is being updated to 'admin' or 'provider', we should remove any supermarket association since they don't need it.
         if (updateData.role === 'admin' || updateData.role === 'provider' || !updateData.supermarket) {
-            updateData.$unset = { supermarket: 1 }; // Operador de MongoDB para eliminar el campo
-            delete updateData.supermarket;          // Lo quitamos del objeto de actualización
+            updateData.$unset = { supermarket: 1 }; // Operate a unsetting the supermarket field if the role is admin/provider or if supermarket is not provided
+            delete updateData.supermarket;          // We also delete it from the updateData to avoid confusion
         }
 
-        // Actualización y retorno del nuevo documento (new: true)
+        // Update the user and return the updated document
         const updatedUser = await User.findByIdAndUpdate(
             id, 
             updateData, 
-            { new: true, runValidators: true } // runValidators asegura que el Enum de 'role' se respete
+            { new: true, runValidators: true } // runValidators ensures that the schema validations are applied during update
         ).select('-password').populate('supermarket', 'name');
 
         if (!updatedUser) {
@@ -113,14 +113,14 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     }
 };
 
-// @desc    Desactivar un usuario (Soft Delete)
+// @desc    Soft delete a user (set status to false)
 // @route   DELETE /api/users/:id
-// @access  Privado (Idealmente solo Admin)
+// @access  Private (Ideally only Admin)
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
         const { id } = req.params;
         
-        // Aplicamos Soft Delete cambiando el status a false para no perder el historial
+        // Apply a soft delete by setting the status to false instead of removing the document from the database
         const user = await User.findByIdAndUpdate(id, { status: false });
         
         if (!user) {
