@@ -1,6 +1,6 @@
 # 📦 StockMaster
 
-![Status](https://img.shields.io/badge/Status-In_Development-green?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Deployed-green?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
