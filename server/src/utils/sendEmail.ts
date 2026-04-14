@@ -6,9 +6,10 @@ interface EmailOptions {
     message: string;
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY); 
-
+// Function to send an email using Resend API
 export const sendEmail = async (options: EmailOptions) => {
+    const resend = new Resend(process.env.RESEND_API_KEY); 
+
     const { data, error } = await resend.emails.send({
         from: 'StockMaster <onboarding@resend.dev>', 
         to: options.email,
